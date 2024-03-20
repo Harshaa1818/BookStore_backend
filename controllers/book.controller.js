@@ -10,11 +10,21 @@ const CreateBook=asynchandler(async function(req,res){
     const {bookName, description, noOfPages, authorName, publisherName} = req.body;
     
    
-    if ([bookName, description, noOfPages, authorName, publisherName].some((field)=>field?.trim()==="" )) { //validation for:  all fields are mandatory
-        throw new apierror(400,"All fields are required");
-        
+    if ([bookName, description, noOfPages, authorName, publisherName].some((field)=>field?.trim()==="" )) {             //validation for:  all fields are mandatory
+        return res
+        .status(404) 
+        .json(new apierror(404, "Error is: ","All fiels are mandatory"));
     }
-    const existedbook=await book.find({bookName});  // check if there exist another book with same name or not , if yes then throw error
+    const existedbook=await book.find({bookName:req.params.userdata})  
+    
+    
+       
+      
+    // if(existedbook)  {                                                                       // check if there exist another book with same name or not , if yes then throw error{
+    //     return res
+    //     .status(401)
+    //     .json( new apierror(401, existedbook,"Book name already exist")); 
+    // }
 
     const newbook= await book.create({ 
         bookName,
@@ -24,12 +34,14 @@ const CreateBook=asynchandler(async function(req,res){
         publisherName
     })
 
-    const registeredBook=await book.findById(newbook._id);  // get details of newly registered book
+    const registeredBook=await book.findById(newbook);  // get details of newly registered book
 
        
 
     if(!registeredBook){
-        throw new apierror(500, "something went wrong while registering book"); // if details are empty that means some error has occured while storing in DB
+       return res
+       .status(404) 
+       .json(new apierror(500, registeredBook,"something went wrong while registering book")); // if details are empty that means some error has occured while storing in DB
     }
 
     return res
@@ -47,7 +59,7 @@ const getBook=asynchandler(async function(req,res){
     })
 
 
-    if(!registeredBook.data)                                 // if book does't exist then throw error
+    if(!registeredBook)                                 // if book does't exist then throw error
     {
         return res
         .status(404)
@@ -56,7 +68,7 @@ const getBook=asynchandler(async function(req,res){
     
     return res
     .status(201)
-    .json(new apiresponse(200, registeredBook, "get book details succesfully"))         // if we got the book we are searching for then log book details 
+    .json(new apiresponse(200, registeredBook, " book details fetched succesfully"))         // if we got the book we are searching for then log book details 
 
 })
 
