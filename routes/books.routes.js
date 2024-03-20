@@ -4,7 +4,7 @@ import { verifyJWT } from "../middlewares/auth.middlewares.js";
 const router= Router();
 
 router.route("/create").post(verifyJWT,CreateBook)
-router.route("/:userdata").get(getBook);
+router.route("/:userdata").get(verifyJWT,getBook);
 router.route("/:userId").delete(verifyJWT,deleteBook);
 router.route("/generate-token").post(generateAccessAndRefreshToken);
 
