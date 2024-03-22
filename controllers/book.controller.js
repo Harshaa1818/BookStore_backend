@@ -5,7 +5,21 @@ import { apiresponse } from "../utils/apiresponse.js";
 import jwt from "jsonwebtoken"
 
 //logic for registering a book
-const CreateBook=asynchandler(async function(req,res){
+
+// const myMiddleware = (req, res, next) => {
+//     console.log('Middleware function called');
+    
+//     // next(); // Call the next middleware function
+// };
+
+
+
+const CreateBook=asynchandler(async function(req,res,next){
+
+    // (function(){
+    //     res.write("request is processing")
+    // })();
+    
 
     const {bookName, description, noOfPages, authorName, publisherName} = req.body;
     
@@ -15,9 +29,13 @@ const CreateBook=asynchandler(async function(req,res){
         .status(404) 
         .json(new apierror(404, "Error is: ","All fiels are mandatory"));
     }
-    const existedbook = await book.findOne({
+
+        const existedbook = await book.findOne({
         $and: [{ bookName }, { description }]
-    })
+        })
+    
+    
+    
 
     if (existedbook) {
         return res
@@ -33,19 +51,24 @@ const CreateBook=asynchandler(async function(req,res){
         publisherName
     })
 
-    const registeredBook=await book.findById(newbook);  // get details of newly registered book
+    const registeredBook=await book.findById(newbook._id);  // get details of newly registered book
 
-       
-
+    
+    
+    
     if(!registeredBook){
        return res
        .status(404) 
        .json(new apierror(500, registeredBook,"something went wrong while registering book")); // if details are empty that means some error has occured while storing in DB
     }
+    
+ 
 
     return res
-    .status(201)
-    .json(new apiresponse(200, registeredBook, "book registered succesfully"))  // return response if book get saved in DB
+    .status(202)
+    .json(new apiresponse(201, registeredBook, "book registered succesfully")) // return response if book get saved in DB
+
+    
 
 })
 
@@ -103,7 +126,7 @@ const generateAccessAndRefreshToken= async (req,res)=>{
             const token = jwt.sign(data, jwtSecretKey,   // when we create a JWT it get's store in token variable , later we will share it as a response
                 {
 
-                expiresIn: '1h' // expires in 1 hour
+                expiresIn: '24h' // expires in 1 hour
 
                  });
          
