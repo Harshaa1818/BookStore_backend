@@ -18,10 +18,10 @@ app.use(express.static("public"));
 
 
 
-import {router} from "./routes/books.routes.js"
+import userRouter from "./routes/books.routes.js"
 
-app.use("/api/v1",router)
-app.use("/api/v1/get",router)
-app.use("/api/v1/delete",router)
+app.use("/api/v1",userRouter)
+app.use("/api/v1/get",userRouter)
+app.use("/api/v1/delete",userRouter)
 
 export {app};

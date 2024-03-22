@@ -15,16 +15,15 @@ const CreateBook=asynchandler(async function(req,res){
         .status(404) 
         .json(new apierror(404, "Error is: ","All fiels are mandatory"));
     }
-    const existedbook=await book.find({bookName:req.params.userdata})  
-    
-    
-       
-      
-    // if(existedbook)  {                                                                       // check if there exist another book with same name or not , if yes then throw error{
-    //     return res
-    //     .status(401)
-    //     .json( new apierror(401, existedbook,"Book name already exist")); 
-    // }
+    const existedbook = await book.findOne({
+        $and: [{ bookName }, { description }]
+    })
+
+    if (existedbook) {
+        return res
+        .status(404) 
+        .json( new apierror(409,existedbook, "Book Name already exist"));
+    }
 
     const newbook= await book.create({ 
         bookName,

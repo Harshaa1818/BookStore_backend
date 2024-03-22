@@ -9,4 +9,4 @@ router.route("/:userId").delete(verifyJWT,deleteBook);
 router.route("/generate-token").post(generateAccessAndRefreshToken);
 
 
-export {router};
+export default router
